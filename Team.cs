@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProjectPackage
 {
-    internal class Program
+    public class Team
     {
+        public string Name { get; set; }
     }
 }
-
-
-
-

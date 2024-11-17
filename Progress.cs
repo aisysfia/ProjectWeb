@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace ProjectPackage
 {
-    internal class Program
+    public enum Progress
     {
+        ToDo = 1,
+        InProgress = 2,
+        Completed = 3
     }
 }
-
-
-
-
