@@ -1,0 +1,134 @@
+﻿@using Google.Cloud.Firestore;
+@page "/task"
+
+<PageTitle>MyTask</PageTitle>
+
+<head>
+    <style>
+        body {
+        background-image: url('IMG_bluey.JPG');
+        }
+    </style>
+</head>
+
+<h6 style="font-size:400%; font-family:'Trebuchet MS'; background-color:lightcyan;"> My Task </h6>
+
+<div>
+    <h4>Add a New Task</h4>
+    <form @onsubmit="AddTask">
+        <div>
+            <label for="taskName">Task Name:</label>
+            <input id="taskName" @bind="newTaskName" placeholder="Enter task name" required />
+        </div>
+        <div>
+            <label for="progress">Progress:</label>
+            <select id="progress" @bind="newTaskProgress">
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+        <div>
+            <label for="priority">Priority:</label>
+            <select id="priority" @bind="newTaskPriority">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        <button type="submit">Add Task</button>
+    </form>
+</div>
+
+<h4 style="font-size:250%; font-family:'Trebuchet MS'; background-color:lightblue;">Task List</h4>
+@if (tasks.Count == 0)
+{
+    <p>No tasks available. Add a task to get started!</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Progress</th>
+                <th>Priority</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in tasks)
+            {
+                <tr>
+                    <td>@task.Name</td>
+                    <td>
+                        <select @onchange="(e) => UpdateProgress(task, e.Value.ToString())">
+                            <option value="To Do" selected="@((task.Progress == "To Do"))">To Do</option>
+                            <option value="In Progress" selected="@((task.Progress == "In Progress"))">In Progress</option>
+                            <option value="Completed" selected="@((task.Progress == "Completed"))">Completed</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select @onchange="(e) => UpdatePriority(task, e.Value.ToString())">
+                            <option value="Low" selected="@((task.Priority == "Low"))">Low</option>
+                            <option value="Medium" selected="@((task.Priority == "Medium"))">Medium</option>
+                            <option value="High" selected="@((task.Priority == "High"))">High</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button @onclick="() => DeleteTask(task)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<TaskItem> tasks = new List<TaskItem>();
+
+    private string newTaskName = string.Empty;
+    private string newTaskProgress = "To Do";
+    private string newTaskPriority = "Low";
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTaskName))
+        {
+            tasks.Add(new TaskItem(newTaskName, newTaskProgress, newTaskPriority));
+            newTaskName = string.Empty;
+            newTaskProgress = "To Do";
+            newTaskPriority = "Low";
+        }
+    }
+
+    private void UpdateProgress(TaskItem task, string newProgress)
+    {
+        task.Progress = newProgress;
+    }
+
+    private void UpdatePriority(TaskItem task, string newPriority)
+    {
+        task.Priority = newPriority;
+    }
+
+    private void DeleteTask(TaskItem task)
+    {
+        tasks.Remove(task);
+    }
+
+    private class TaskItem
+    {
+        public string Name { get; set; }
+        public string Progress { get; set; } // To Do, In Progress, Completed
+        public string Priority { get; set; } // Low, Medium, High
+
+        public TaskItem(string name, string progress, string priority)
+        {
+            Name = name;
+            Progress = progress;
+            Priority = priority;
+        }
+    }
+
+    
+}
